@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <script src="example.js"></script>
+</head>
+
+<body ng-app="plunker">
+  <script type="text/ng-template" id="customTemplate.html">
+    <a>
+      <div>{{match.label.code}}</div>
+      <span ng-bind-html="match.label.display | uibTypeaheadHighlight:query"></span>
+    </a>
+  </script>
+  <div class="container-fluid" style="margin-bottom:5rem;">
+    <h2>$expand populated selection</h2>
+    <img style="float:right" src="https://ontoserver.csiro.au/docs/4.1/images/network-cloud-internet-small.png">
+    <p>Example demonstrating FHIR's <tt><a href="http://hl7.org/fhir/conceptmap-operations.html#translate">ConceptMap/$translate</a></tt>.
+    </p>
+    <p>
+    Select a <i>Map</i> from the drop-down, then search for a <i>Source</i> code to translate.
+    </p>
+  </div>
+  <div ng-controller="Main as main">
+    <!-- ENDPOINT -->
+    <div class="container-fluid">
+      <label class="label label-default" for="endpoint">Endpoint</label>
+      <input class="form-control" id="endpoint" type="text" ng-model="endpoint" ng-init="endpoint='https://ontoserver.csiro.au/stu3-latest'" placeholder="FHIR Server base URL">
+    </div>
+
+    <!-- ConceptMap -->
+    <div class="container-fluid">
+      <label class="label label-default" for="conceptmap">Map</label>
+      <select class="form-control" id="conceptmap" ng-model="selected" ng-options="item as item.name for item in conceptmaps(endpoint)">
+      </select>
+      <pre ng-show="selected.id">{{selected.description}}
+
+From: {{selected.sourceUri}}
+To:   {{selected.targetUri}}</pre>
+    </div>
+
+    <!-- SOURCE CODE -->
+    <div class="container-fluid" ng-controller="TypeaheadCtrl">
+      <label class="label label-default" for="source">Source : {{$parent.selected.sourceName}}</label>
+      <input id="source" class="form-control" placeholder="Find codes..." type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" ng-model="result" uib-typeahead="suggestion for suggestion in concepts($viewValue)"
+      typeahead-loading="loading" typeahead-template-url="customTemplate.html" typeahead-input-formatter="result.display" />
+      <pre>{{loading && 'Searching...' || ''}} {{result | json}}</pre>
+
+      <!-- TRANSLATION -->
+      <label class="label label-default" for="translation">Translation</label>
+      <pre ng-show="result && translate(result.code, result.system).result" id="translation">{{result && translation | json}}</pre>
+    </div>
+  </div>
+</body>
+
+</html>

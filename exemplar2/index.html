@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+  <script src="app.js"></script>
+  <style>
+    li.active span.text-muted {
+      color: #ddd;
+    }
+  </style>
+</head>
+
+<body ng-app="plunker">
+  <script type="text/ng-template" id="customTemplate.html">
+    <a>
+      <span ng-bind-html="match.label.display | uibTypeaheadHighlight:query"></span>
+      <span class="pull-right text-muted">{{'&nbsp;'+match.label.tag}}</span>
+    </a>
+  </script>
+  <div class="container-fluid" style="margin-bottom:5rem;">
+    <h2>$expand with filter example</h2>
+
+    <p>Example of connecting FHIR's <tt><a href="http://hl7.org/fhir/STU3/valueset-operations.html#expand" target="_blank">/ValueSet/$expand</a></tt> with <tt>filter</tt> parameter to Typeahead&nbsp;(ui.bootstrap.typeahead) from <a href="http://angular-ui.github.com/bootstrap/"
+      target="_blank">http://angular-ui.github.com/bootstrap/</a>
+    </p>
+    <p>
+      In this example the ValueSet is all descendants of the SNOMED CT root concept (138875005).
+      This ValueSet is <a href="http://hl7.org/fhir/STU3/snomedct.html#implicit" target="_blank">implicitly defined</a> and has the URI <tt>http://snomed.info/sct?fhir_vs=isa/138875005</tt>.
+      As a consequence, all inactive codes are excluded (since they have no parents).
+    </p>
+    <p>
+      Because the ValueSet includes codes from mutiple hierarchies (which would be unusual in a clinical setting),
+      we extract and display the semantic tag to help disambiguate otherwise similar codes.
+      For example, try searching for <em>cataract</em>.
+    </p>
+
+    <div class="container-fluid" ng-controller="TypeaheadCtrl">
+      <pre style="max-height:500px;">{{loading && 'Loading...' || 'Selection:'}} {{result | json}}</pre>
+      <input
+        class="form-control"
+        placeholder="Find SNOMED CT codes..."
+        type="text"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        ng-model="result"
+        uib-typeahead="suggestion for suggestion in concepts($viewValue, 'http://snomed.info/sct?fhir_vs=isa/138875005')"
+        typeahead-loading="loading"
+        typeahead-template-url="customTemplate.html"
+        typeahead-input-formatter="result.display"
+      />
+    </div>
+  </div>
+
+  <nav style="position:fixed;bottom:0;width:100%;background-color:#eee;" class="navbar navbar-light bg-light">
+    <div class="small">
+      <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
+      <br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">This $validate-code exemplar</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">CSIRO</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+    </div>
+  </nav>
+
+</body>
+
+</html>
