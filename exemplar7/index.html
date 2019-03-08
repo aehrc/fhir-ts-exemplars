@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+  <script src="app.js"></script>
+  <style>
+    li.active span.text-muted {
+      color: #ddd;
+    }
+    .ignored {
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+
+<body ng-app="plunker">
+  <script type="text/ng-template" id="customTemplate.html">
+    <a>
+      <span ng-bind-html="match.label.display | uibTypeaheadHighlight:query"></span>
+      <span class="pull-right text-muted">{{'&nbsp;'+match.label.tag}}</span>
+    </a>
+  </script>
+  <div class="container-fluid" style="margin-bottom:5rem;">
+    <h2>UI that ensures users have performed a relevant code search</h2>
+
+    <p>
+      Example of how a UI can be designed to encourage capture of coded clinical data rather than free text.
+    </p>
+    <p>
+      In this example the user is required to perform a relevant search before being able to enter and record a free-text alternative.
+    </p>
+    <p>
+      To do this, the "coded diagnosis" field is the only field that is enabled,
+      and the user can search for a code.
+      If they find a match, then the <em>Done</em> button is enabled.
+      If not, then the free-text field is enabled and the user can enter an uncoded diagnosis.
+      If the free-text version is sufficiently similar to the text that was searched for as a coded diagnosis,
+      then the <em>Done</em> button is enabled.
+    </p>
+    <p>
+      To illustrate what is happening "behind the scenes", a FHRI CodeableConcept, the basis of the similarity metric, is displayed to show what would
+      be recorded when the <em>Done</em> button is clicked.
+      Additionally, the Levenshtein distance, the basis of the similarity metric, is displayed.
+    </p>
+
+    <div class="container-fluid" ng-controller="TypeaheadCtrl">
+      <pre style="max-height:500px;">{{'Coding:'}} {{result | json}}</pre>
+      <pre ng-if="distance >= 0">Levenshtein Distance: {{ distance }}</pre>
+      <div class="form-group" ng-class="{'has-success': match.display && match.code, 'has-error': match.display && !match.code}">
+        <!-- see https://github.com/angular-ui/bootstrap/tree/master/src/typeahead for uib-typeahead details -->
+        <input
+          class="form-control"
+          ng-class="{ignored: !match.code && freetext}"
+          placeholder="Coded problem / diagnosis..."
+          type="text"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          ng-model="match"
+          uib-typeahead="suggestion for suggestion in concepts($viewValue, 'http://snomed.info/sct?fhir_vs=refset/32570581000036105')"
+          typeahead-min-length="2"
+          typeahead-loading="loading"
+          typeahead-template-url="customTemplate.html"
+          typeahead-input-formatter="match.display"
+          typeahead-wait-ms="50"
+          typeahead-on-select="onSelect($item, $model, $label, $event)"
+        />
+      </div>
+      <div class="form-group" ng-class="{'has-success': match.display && freetext, 'has-error': freetext && match.display && notSimilar()}">
+        <input ng-class="{ignored: match.display && match.code && freetext}" ng-disabled="!match.display || match.code" class="form-control" ng-model="freetext" placeholder="Free-text problem/diagnosis" />
+      </div>
+      <div class="form-group">
+        <button ng-disabled="!match.code && notSimilar()" type="submit" class="btn pull-right"
+                ng-class="{'btn-default': !match.code && notSimilar(), 'btn-success': match.code, 'btn-warning': !match.code && freetext}">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <nav style="position:fixed;bottom:0;width:100%;background-color:#eee;" class="navbar navbar-light bg-light">
+    <div class="small">
+      <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
+      <br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">This $validate-code exemplar</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">CSIRO</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+    </div>
+  </nav>
+
+</body>
+
+</html>

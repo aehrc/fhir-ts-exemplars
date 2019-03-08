@@ -23,7 +23,7 @@
   <div class="container-fluid" style="margin-bottom:5rem;">
     <h2>SNOMED ECL-based ValueSets</h2>
     <p>
-      This page allows you to explore the use of SNOMED's ECL expressions via
+      This page allows you to explore the use of SNOMED's ECL expressions via the
       <a href="http://hl7.org/fhir/STU3/valueset-operations.html#expand"><tt>/ValueSet/$expand</tt></a> operation
       on SNOMED Implicit ValueSets.
     </p>
@@ -40,33 +40,37 @@
     <table class="table table-striped table-sm table-hover">
       <thead class="thead-dark">
         <tr>
-          <th>ECL expression</th>
+          <th>ECL expression examples</th>
         </tr>
       </thead>
       <tbody>
         <tr onclick="preload('MemberOf 32570481000036109')" class="">
-          <td>MemberOf 32570481000036109 |Emergency department diagnosis reference set|</td>
+          <td><tt>MemberOf 32570481000036109 |Emergency department diagnosis reference set|</tt></td>
         </tr>
         <tr onclick="preload('< 80146002')" class="">
-          <td>&lt;&lt; 80146002 |Appendicitis|</td>
+          <td><tt>&lt;&lt; 80146002 |Appendicitis|</tt></td>
         </tr>
         <tr onclick="preload('DescendantOf 80146002')" class="">
-          <td>DescendantOf 80146002</td>
+          <td><tt>DescendantOf 80146002</tt></td>
         </tr>
         <tr onclick="preload('<< 80146002')" class="">
-          <td>&lt;&lt; 80146002 |Appendicitis|</td>
+          <td><tt>&lt;&lt; 80146002 |Appendicitis|</tt></td>
         </tr>
         <tr onclick="preload('DescendantOrSelfOf 80146002')" class="">
-          <td>DescendantOrSelfOf 80146002</td>
+          <td><tt>DescendantOrSelfOf 80146002</tt></td>
         </tr>
         <tr onclick="preload('< 19829001 AND < 301867009')" class="">
-          <td>&lt; 19829001 |Disorder of lung| AND &lt; 301867009 |Edema of trunk|</td>
+          <td><tt>&lt; 19829001 |Disorder of lung| AND &lt; 301867009 |Edema of trunk|</tt></td>
         </tr>
         <tr onclick="preload('< 19829001 OR < 301867009')" class="">
-          <td>&lt; 19829001 |Disorder of lung| OR &lt; 301867009 |Edema of trunk|</td>
+          <td><tt>&lt; 19829001 |Disorder of lung| OR &lt; 301867009 |Edema of trunk|</tt></td>
         </tr>
         <tr onclick="preload('< 19829001 MINUS < 301867009')" class="">
-          <td>&lt; 19829001 |Disorder of lung| MINUS &lt; 301867009 |Edema of trunk|</td>
+          <td><tt>&lt; 19829001 |Disorder of lung| MINUS &lt; 301867009 |Edema of trunk|</tt></td>
+        </tr>
+        <tr onclick="preload('<<404684003 : <<47429007 = <<267038008')" class="">
+          <td><tt>&lt;&lt; 404684003 |Clinical finding| :<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt; 47429007 |Associated with| = &lt;&lt; 267038008 |Edema|</tt></td>
         </tr>
       </tbody>
     </table>
