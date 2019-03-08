@@ -7,6 +7,10 @@ angular
     $scope.distance = 0;
     $scope.match = {};
 
+    $scope.alert = function (text) {
+      alert(text);
+    }
+
     $scope.notSimilar = function() {
       $scope.distance = levenshteinDistance($scope.match.display, $scope.freetext);
       
