@@ -3,6 +3,8 @@ angular
   .controller('Main', ['$scope', '$http', function($scope, $http) {
     // console.log('EP', $scope.endpoint);
 
+    $scope.endpoint = 'https://stu3.ontoserver.csiro.au/fhir';
+
     function flattenP(params) {
       var m = {};
       params.forEach(function(p) {
@@ -24,13 +26,40 @@ angular
       return m;
     }
 
-    $scope.selected = {}
+    $scope.selected = {};
     $scope.sourceName = undefined;
 
     var x = true,
         maps = [];
 
     $scope.conceptmaps = function(endpoint) {
+
+      $scope.selected = undefined;
+      
+      maps.push({
+        id: '1',
+        url: 'http://snomed.info/sct?fhir_cm=900000000000497000',
+        name: 'SNOMED to CTV3 map',
+        description: 'SNOMED to CTV3 map',
+        sourceUri: 'http://snomed.info/sct?fhir_vs',
+        sourceName: 'SNOMED CT',
+        targetUri: 'http://read.info/ctv3/vs',
+      });
+      maps.push({
+        id: '2',
+        url: 'http://snomed.info/sct?fhir_cm=900000000000489007',
+        name: 'SNOMED Inactivation indicator map',
+        description: 'SNOMED Inactivation indicator map',
+        sourceUri: 'http://snomed.info/sct?fhir_vs',
+        sourceName: 'SNOMED CT',
+        targetUri: 'http://snomed.info/sct?fhir_vs',
+      });
+      
+      $scope.selected = maps[0];
+
+      return maps;
+      
+      $scope.error = undefined;
       // console.log('EP', endpoint);
       if (x !== endpoint) {
         x = endpoint;
@@ -53,7 +82,7 @@ angular
                 return e.resource;
               })
               .filter(function(e) {
-                return !(e.sourceUri || '').startsWith('urn:') &&
+                return !(false && e.sourceUri || '').startsWith('urn:') &&
                        (e.targetUri || '').startsWith('http://snomed.info/sct') && e.targetUri;
               })
               .forEach(e => maps.push(e));
@@ -73,9 +102,12 @@ angular
 
     var cache = {};
     $scope.translate = function(code, system) {
+      console.log('TRANSLATE', code, system);
       if (code && system) {
+        var key =
+          $scope.selected.url + '|' + code + '|' + system + '|' + $scope.selected.targetUri;
         // console.log(code, system);
-        return cache[code + '|' + system] || $http({
+        return cache[key] || $http({
             method: 'GET',
             url: $scope.endpoint + '/ConceptMap/$translate',
             params: {
@@ -89,13 +121,14 @@ angular
           })
           .then(function(response) {
             var params = flattenP(response.data.parameter);
-            cache[code + '|' + system] = params;
-            // console.log('P', params);
+            cache[key] = params;
+            console.log('P', params);
             $scope.translation = params;
             return params.result;
           }, function (response) {
             console.log('ERROR', response);
-            cache[code + '|' + system] = 'ERROR';
+            cache[key] = 'ERROR';
+            $scope.translation = response.data;
           });
       }
     };
@@ -131,7 +164,8 @@ angular
   }])
   .controller('TypeaheadCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.concepts = function(term, endpoint) {
-      console.log(term);
+      // console.log(term);
+      $scope.error = undefined;
       var valueSet = $scope.selected.sourceUri;
       endpoint = $scope.endpoint || 'https://ontoserver.csiro.au/stu3-latest';
 
@@ -151,6 +185,14 @@ angular
           return response.data.expansion.contains || [{
             display: term
           }];
+        }, function (response) {
+          console.log('ERROR', response.status, JSON.stringify(response.data));
+          var res = response.data;
+          if (res && res.resourceType === 'OperationOutcome') {
+            $scope.error = res;
+          } else {
+            $scope.error = JSON.stringify(response.data);
+          }
         });
     };
 

@@ -15,8 +15,8 @@
       <span ng-bind-html="match.label.display | uibTypeaheadHighlight:query"></span>
     </a>
   </script>
-  <div class="container-fluid" style="margin-bottom:5rem;">
-    <h2>$expand populated selection</h2>
+  <div class="container-fluid">
+    <h2>Using the FHIR $translate operation</h2>
     <img style="float:right" src="https://ontoserver.csiro.au/docs/4.1/images/network-cloud-internet-small.png">
     <p>Example demonstrating FHIR's <tt><a href="http://hl7.org/fhir/conceptmap-operations.html#translate">ConceptMap/$translate</a></tt>.
     </p>
@@ -24,17 +24,12 @@
     Select a <i>Map</i> from the drop-down, then search for a <i>Source</i> code to translate.
     </p>
   </div>
-  <div ng-controller="Main as main">
-    <!-- ENDPOINT -->
-    <div class="container-fluid">
-      <label class="label label-default" for="endpoint">Endpoint</label>
-      <input class="form-control" id="endpoint" type="text" ng-model="endpoint" ng-init="endpoint='https://ontoserver.csiro.au/stu3-latest'" placeholder="FHIR Server base URL">
-    </div>
+  <div ng-controller="Main as main" style="margin-bottom:8rem;">
 
     <!-- ConceptMap -->
-    <div class="container-fluid">
+    <div class="container-fluid" ng-init="mapList=conceptmaps(endpoint)">
       <label class="label label-default" for="conceptmap">Map</label>
-      <select class="form-control" id="conceptmap" ng-model="selected" ng-options="item as item.name for item in conceptmaps(endpoint)">
+      <select class="form-control" id="conceptmap" ng-model="selected" ng-options="item as item.name for item in mapList">
       </select>
       <pre ng-show="selected.id">{{selected.description}}
 
@@ -49,11 +44,31 @@ To:   {{selected.targetUri}}</pre>
       typeahead-loading="loading" typeahead-template-url="customTemplate.html" typeahead-input-formatter="result.display" />
       <pre>{{loading && 'Searching...' || ''}} {{result | json}}</pre>
 
+      <p><a href="{{endpoint}}/ConceptMap/$translate?url={{selected.url}}&target={{selected.targetUri}}&system={{result.system}}&code={{result.code}}" target="_blank">
+        <tt ng-if="result.code">[base]/ConceptMap/$translate?url={{selected.url}}&amp;target={{selected.targetUri}}&amp;system={{result.system}}&amp;code={{result.code}}</tt>
+      </a></p>
+      
       <!-- TRANSLATION -->
       <label class="label label-default" for="translation">Translation</label>
-      <pre ng-show="result && translate(result.code, result.system).result" id="translation">{{result && translation | json}}</pre>
+      <pre ng-show="translate(result.code, result.system)" id="translation" ng-class="{bg-danger: !translation.result}">{{result && translation | json}}</pre>
+{{translation.result}}
+      <!-- ERRORS -->
+      <table class="table table-sm" ng-if="error">
+        <tr ng-repeat="item in error.issue">
+          <td>{{item.code}}</td><td>{{item.diagnostics}}</td>
+        </tr>
+      </table>
     </div>
+
   </div>
+
+  <nav style="position:fixed;bottom:0;width:100%;background-color:#eee;" class="navbar navbar-light bg-light">
+    <div class="small">
+      <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
+      <br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">This exemplar</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">CSIRO</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+    </div>
+  </nav>
+
 </body>
 
 </html>
