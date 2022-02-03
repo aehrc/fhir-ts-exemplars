@@ -3,7 +3,7 @@ angular
   .controller('Main', ['$scope', '$http', function($scope, $http) {
     // console.log('EP', $scope.endpoint);
 
-    $scope.endpoint = 'https://stu3.ontoserver.csiro.au/fhir';
+    $scope.endpoint = 'https://r4.ontoserver.csiro.au/fhir';
 
     function flattenP(params) {
       var m = {};
@@ -167,7 +167,7 @@ angular
       // console.log(term);
       $scope.error = undefined;
       var valueSet = $scope.selected.sourceUri;
-      endpoint = $scope.endpoint || 'https://ontoserver.csiro.au/stu3-latest';
+      endpoint = $scope.endpoint || 'https://r4.ontoserver.csiro.au/fhir';
 
       return $http({
           method: 'GET',

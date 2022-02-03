@@ -42,7 +42,7 @@ angular
 
     $scope.concepts = function(term, valueSet, endpoint) {
       valueSet = valueSet || 'http://snomed.info/sct?fhir_vs';
-      endpoint = endpoint || 'https://stu3.ontoserver.csiro.au/fhir';
+      endpoint = endpoint || 'https://r4.ontoserver.csiro.au/fhir';
 
       $scope.distance = 0;
 
