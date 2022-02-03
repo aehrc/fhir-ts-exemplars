@@ -1,5 +1,5 @@
 var base = "https://r4.ontoserver.csiro.au/fhir";
-// base = "http://tx.fhir.org/r3";
+// base = "http://tx.fhir.org/r4";
 // base = "http://its.patientsfirst.org.nz/RestService.svc/Terminz";
 // base = 'http://fhirtest.uhn.ca/baseDstu3';
 
