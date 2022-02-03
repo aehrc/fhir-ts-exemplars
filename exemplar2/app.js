@@ -10,7 +10,7 @@ angular
           method: 'GET',
           url: endpoint + '/ValueSet/$expand',
           params: {
-            'identifier': valueSet,
+            'url': valueSet,
             'filter': term,
             'count': 10,
             'includeDesignations': true,

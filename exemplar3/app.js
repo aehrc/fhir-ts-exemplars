@@ -12,7 +12,7 @@ angular
           method: 'GET',
           url: endpoint + '/ValueSet/$expand',
           params: {
-            'identifier': valueSet,
+            'url': valueSet,
             'count': 10,
             '_format': 'json'
           },
